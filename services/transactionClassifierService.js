@@ -417,6 +417,34 @@ function classifyMessage(message) {
         };
     }
 
+    // MTN MoMo Agent : bilan journalier des commissions.
+    // Le volume depots+retraits n'est PAS le montant du bonus.
+    const normalizedSummary = normalizeText(text);
+    const commissionSummary =
+        /\bdepot\s*\+\s*retrait\b/.test(normalizedSummary) &&
+        /\bcommissions?\b/.test(normalizedSummary) &&
+        /\btu as (?:recu|recu)\b/.test(normalizedSummary);
+    if (commissionSummary) {
+        const commissionMatch = text.match(
+            /(?:tu\s+as\s+re[cç]u|vous\s+avez\s+re[cç]u)\s+([\d\s.,]+)\s*f\s+de\s+commissions?/i
+        );
+        if (commissionMatch) {
+            const value = parseNumeric(commissionMatch[1]);
+            if (value > 0) {
+                return {
+                    isTransaction: true,
+                    confidence: 0.99,
+                    reason: "Récapitulatif journalier des commissions MTN",
+                    amount: { value, display: `${formatNumber(value)} FCFA`, currency: "FCFA" },
+                    operator: "MTN Money",
+                    type: "Bonus",
+                    reference: "",
+                    score: 12
+                };
+            }
+        }
+    }
+
     const amount = extractAmount(text);
     const operator = detectOperator(text);
 

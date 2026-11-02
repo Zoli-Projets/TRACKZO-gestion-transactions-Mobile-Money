@@ -358,6 +358,28 @@ function detectType(message) {
 
 function parseTransaction(message) {
 
+    // Les bilans MoMo Agent sont des bonus : retenir la commission,
+    // jamais le volume cumulé des dépôts et retraits.
+    const normalized = normalizeText(message);
+    if (/\bdepot\s*\+\s*retrait\b/.test(normalized) &&
+        /\bcommissions?\b/.test(normalized)) {
+        const match = String(message || "").match(
+            /(?:tu\s+as\s+re[cç]u|vous\s+avez\s+re[cç]u)\s+([\d\s.,]+)\s*f\s+de\s+commissions?/i
+        );
+        if (match) {
+            const value = parseNumber(match[1]);
+            if (value > 0) {
+                return {
+                    amount: value,
+                    amountDisplay: `${value} FCFA`,
+                    operator: "MTN Money",
+                    reference: "",
+                    type: "Bonus"
+                };
+            }
+        }
+    }
+
     const amount =
         extractAmount(message);
 
