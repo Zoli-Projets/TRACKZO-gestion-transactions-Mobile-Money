@@ -77,7 +77,7 @@ async function createDailySheet(userId, targetDate = null, options = {}) {
         throw new Error("Refresh token Google introuvable. Veuillez reconnecter Google.");
     }
     if (!googleAccount.dailyFolderId) {
-        throw new Error("Dossier Journaliers introuvable");
+        throw new Error("Votre espace de stockage Google est saturé. Libérez de l'espace ou connectez une autre adresse mail disposant de suffisament d'espace, puis réessayez");
     }
     if (!settings.sheetId) {
         throw new Error("Maître Trackzo introuvable");
