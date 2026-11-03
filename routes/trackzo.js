@@ -1121,7 +1121,7 @@ router.post(
                 success: false,
 
                 error:
-                    "Impossible de préparer le journalier du jour. Veuillez réessayer."
+                    "votre compte n'est pas encore connecté. Veuillez le connecté dans l'onglet 'Aujourd'hui'."
 
             });
 
